@@ -10,6 +10,7 @@ fn default_min_version() -> Version {
     Version::parse(MIN_SUPPORTED_VERSION).expect("Invalid MIN_SUPPORTED_VERSION")
 }
 #[derive(Serialize, Deserialize, Debug)]
+/// Information about the API protocol
 pub struct VersionInfo {
     #[serde(default = "default_protocol_version")]
     pub protocol_version: Version,
@@ -34,9 +35,11 @@ impl VersionInfo {
     }
 }
 
+/// Systems are identified by their system name
 pub type SystemId = String;
 
 #[derive(Serialize, Deserialize, Debug)]
+/// Status of a transcryptor
 pub struct StatusResponse {
     pub system_id: SystemId,
     pub timestamp: DateTime<Utc>,
