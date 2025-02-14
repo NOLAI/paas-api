@@ -3,9 +3,9 @@ use libpep::high_level::contexts::EncryptionContext;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug)]
-/// Get all current open sessions (for a user).
+/// Get all current open sessions for a user.
 pub struct GetSessionsRequest {
-    pub username: Option<String>,
+    pub username: String,
 }
 #[derive(Serialize, Deserialize, Debug)]
 /// Return all current sessions.

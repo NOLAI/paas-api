@@ -1,6 +1,7 @@
 pub const API_BASE: &str = ""; // Currently empty (may need to change)
 
 pub const STATUS: &str = "/status";
+pub const CONFIG: &str = "/config";
 pub mod sessions {
     pub const SCOPE: &str = "/sessions";
     pub const GET_ALL: &str = "/get";
@@ -13,4 +14,6 @@ pub mod transcrypt {
     pub const PSEUDONYMIZE: &str = "/pseudonymize";
     pub const PSEUDONYMIZE_BATCH: &str = "/pseudonymize_batch";
     pub const REKEY: &str = "/rekey";
+    pub const REKEY_BATCH: &str = "/rekey_batch";
+    pub const TRANSCRYPT: &str = "/transcrypt";
 }
