@@ -2,13 +2,9 @@ pub const API_BASE: &str = ""; // Currently empty (may need to change)
 
 pub const STATUS: &str = "/status";
 pub const CONFIG: &str = "/config";
-pub mod sessions {
-    pub const SCOPE: &str = "/sessions";
-    pub const GET_ALL: &str = "/get";
-    pub const GET_USER: &str = "/get/{username}";
-    pub const START: &str = "/start";
-    pub const END: &str = "/end";
-}
+pub const SESSIONS_GET: &str = "/sessions";
+pub const SESSIONS_START: &str = "/sessions/start";
+pub const SESSIONS_END: &str = "/sessions/end";
 
 pub mod transcrypt {
     pub const PSEUDONYMIZE: &str = "/pseudonymize";

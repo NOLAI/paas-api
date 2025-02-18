@@ -11,3 +11,5 @@ pub mod sessions;
 pub mod status;
 /// Pseudonym transcryption
 pub mod transcrypt;
+/// Transcryptor config
+pub mod config;
