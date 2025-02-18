@@ -1,7 +1,7 @@
+use crate::status::SystemId;
 use libpep::distributed::key_blinding::BlindedGlobalSecretKey;
 use libpep::high_level::keys::GlobalPublicKey;
 use serde::{Deserialize, Serialize};
-use crate::status::SystemId;
 
 #[derive(Serialize, Deserialize, Clone, Debug, Eq, PartialEq)]
 /// The details of a single transcryptor
