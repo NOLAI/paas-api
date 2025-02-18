@@ -78,16 +78,6 @@ pub struct RekeyBatchResponse {
 
 #[derive(Serialize, Deserialize, Debug)]
 /// An API request to transcrypt a single encrypted pseudonym.
-pub struct TranscryptRequest {
-    /// The encrypted data.
-    pub encrypted_data: Vec<EncryptedDataPoint>,
-    /// The session the data was encrypted in associated with this server.
-    pub session_from: EncryptionContext,
-    /// The session the data should be decryptable in associated with this server.
-    pub session_to: EncryptionContext,
-}
-#[derive(Serialize, Deserialize, Debug)]
-/// An API request to transcrypt a single encrypted pseudonym.
 pub struct TranscryptionRequest {
     /// The encrypted messages.
     pub encrypted: Vec<EncryptedEntityData>,
