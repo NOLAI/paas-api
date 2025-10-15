@@ -13,6 +13,6 @@ pub struct TranscryptorConfig {
 /// The configuration of a PAAS system
 pub struct PAASConfig {
     pub blinded_global_keys: BlindedGlobalKeys,
-    pub global_public_key: GlobalPublicKeys,
+    pub global_public_keys: GlobalPublicKeys,
     pub transcryptors: Vec<TranscryptorConfig>,
 }
