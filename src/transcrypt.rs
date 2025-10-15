@@ -1,6 +1,6 @@
 use libpep::high_level::contexts::{EncryptionContext, PseudonymizationDomain};
-use libpep::high_level::data_types::{EncryptedDataPoint, EncryptedPseudonym};
-use libpep::high_level::ops::EncryptedEntityData;
+use libpep::high_level::data_types::{EncryptedAttribute, EncryptedPseudonym};
+use libpep::high_level::ops::{EncryptedData};
 use serde::{Deserialize, Serialize};
 #[derive(Serialize, Deserialize, Debug)]
 /// An API request to transcrypt a single encrypted pseudonym.
@@ -31,9 +31,9 @@ pub struct PseudonymizationBatchRequest {
     pub domain_from: PseudonymizationDomain,
     /// The domain to transcrypt the pseudonyms to.
     pub domain_to: PseudonymizationDomain,
-    /// The session the pseudonyms were encrypted in, associated with this server.
+    /// The session the pseudonyms were encrypted in associated with this server.
     pub session_from: EncryptionContext,
-    /// The session the pseudonyms should be decryptable in, associated with this server.
+    /// The session the pseudonyms should be decryptable in associated with this server.
     pub session_to: EncryptionContext,
 }
 
@@ -45,42 +45,42 @@ pub struct PseudonymizationBatchResponse {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-/// An API request to transcrypt a single encrypted pseudonym.
+/// An API request to transcrypt a single encrypted attribute.
 pub struct RekeyRequest {
     /// The encrypted data.
-    pub encrypted_data: EncryptedDataPoint,
-    /// The session the data was encrypted in associated with this server.
+    pub encrypted_attribute: EncryptedAttribute,
+    /// The session the attribute was encrypted in associated with this server.
     pub session_from: EncryptionContext,
-    /// The session the data should be decryptable in associated with this server.
+    /// The session the attribute should be decryptable in associated with this server.
     pub session_to: EncryptionContext,
 }
 #[derive(Serialize, Deserialize)]
 pub struct RekeyResponse {
-    /// The rekeyed data
-    pub encrypted_data: EncryptedDataPoint,
+    /// The rekeyed attribute
+    pub encrypted_attribute: EncryptedAttribute,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-/// An API request to transcrypt a single encrypted pseudonym.
+/// An API request to transcrypt a single encrypted attribute.
 pub struct RekeyBatchRequest {
-    /// The encrypted data.
-    pub encrypted_data: Vec<EncryptedDataPoint>,
-    /// The session the data was encrypted in associated with this server.
+    /// The encrypted datas.
+    pub encrypted_attributes: Vec<EncryptedAttribute>,
+    /// The session the attributes were encrypted in associated with this server.
     pub session_from: EncryptionContext,
-    /// The session the data should be decryptable in associated with this server.
+    /// The session the attributes should be decryptable in associated with this server.
     pub session_to: EncryptionContext,
 }
 #[derive(Serialize, Deserialize)]
 pub struct RekeyBatchResponse {
-    /// The rekeyed data
-    pub encrypted_data: Vec<EncryptedDataPoint>,
+    /// The rekeyed attribute
+    pub encrypted_attributes: Vec<EncryptedAttribute>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 /// An API request to transcrypt a single encrypted pseudonym.
 pub struct TranscryptionRequest {
-    /// The encrypted messages.
-    pub encrypted: Vec<EncryptedEntityData>,
+    /// The encrypted data.
+    pub encrypted: Vec<EncryptedData>,
     /// The domain of the encrypted pseudonyms.
     pub domain_from: PseudonymizationDomain,
     /// The domain to transcrypt the pseudonyms to.
@@ -92,6 +92,6 @@ pub struct TranscryptionRequest {
 }
 #[derive(Serialize, Deserialize)]
 pub struct TranscryptionResponse {
-    /// The transcrypted messages (reordered to break linkability).
-    pub encrypted: Vec<EncryptedEntityData>,
+    /// The transcrypted data (reordered to break linkability).
+    pub encrypted: Vec<EncryptedData>,
 }

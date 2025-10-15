@@ -1,4 +1,4 @@
-use libpep::distributed::key_blinding::SessionKeyShare;
+use libpep::distributed::key_blinding::SessionKeyShares;
 use libpep::high_level::contexts::EncryptionContext;
 use serde::{Deserialize, Serialize};
 
@@ -14,7 +14,7 @@ pub struct StartSessionResponse {
     /// A session id
     pub session_id: EncryptionContext,
     /// The secret session key share for this session. Will be provided just once.
-    pub key_share: SessionKeyShare,
+    pub session_key_shares: SessionKeyShares,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
