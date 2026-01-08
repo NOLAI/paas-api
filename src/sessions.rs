@@ -1,5 +1,5 @@
-use libpep::distributed::key_blinding::SessionKeyShares;
-use libpep::high_level::contexts::EncryptionContext;
+use libpep::core::transcryption::EncryptionContext;
+use libpep::distributed::server::keys::SessionKeyShares;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug)]
