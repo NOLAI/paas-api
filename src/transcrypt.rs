@@ -1,6 +1,6 @@
-use libpep::high_level::contexts::{EncryptionContext, PseudonymizationDomain};
-use libpep::high_level::data_types::{EncryptedAttribute, EncryptedPseudonym};
-use libpep::high_level::ops::EncryptedData;
+use libpep::core::data::{EncryptedAttribute, EncryptedPseudonym};
+use libpep::core::transcryption::batch::EncryptedData;
+use libpep::core::transcryption::{EncryptionContext, PseudonymizationDomain};
 use serde::{Deserialize, Serialize};
 #[derive(Serialize, Deserialize, Debug)]
 /// An API request to transcrypt a single encrypted pseudonym.
