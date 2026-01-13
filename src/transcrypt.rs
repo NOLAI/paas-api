@@ -1,6 +1,7 @@
 use libpep::core::data::{EncryptedAttribute, EncryptedPseudonym};
-use libpep::core::transcryption::batch::EncryptedData;
+use libpep::core::json::data::EncryptedPEPJSONValue;
 use libpep::core::transcryption::{EncryptionContext, PseudonymizationDomain};
+use libpep::core::transcryption::batch::EncryptedData;
 use serde::{Deserialize, Serialize};
 #[derive(Serialize, Deserialize, Debug)]
 /// An API request to transcrypt a single encrypted pseudonym.
@@ -94,4 +95,43 @@ pub struct TranscryptionRequest {
 pub struct TranscryptionResponse {
     /// The transcrypted data (reordered to break linkability).
     pub encrypted: Vec<EncryptedData>,
+}
+#[derive(Serialize, Deserialize, Debug)]
+/// An API request to transcrypt a single encrypted pseudonym.
+pub struct JsonTranscryptionRequest {
+    /// The encrypted data.
+    pub encrypted: EncryptedPEPJSONValue,
+    /// The domain of the encrypted pseudonyms.
+    pub domain_from: PseudonymizationDomain,
+    /// The domain to transcrypt the pseudonyms to.
+    pub domain_to: PseudonymizationDomain,
+    /// The session the messages were encrypted in associated with this server.
+    pub session_from: EncryptionContext,
+    /// The session the messages should be decryptable in associated with this server.
+    pub session_to: EncryptionContext,
+}
+#[derive(Serialize, Deserialize)]
+pub struct JsonTranscryptionResponse {
+    /// The transcrypted data (reordered to break linkability).
+    pub encrypted: EncryptedPEPJSONValue,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+/// An API request to transcrypt a single encrypted pseudonym.
+pub struct JsonTranscryptionBatchRequest {
+    /// The encrypted data.
+    pub encrypted: Vec<EncryptedPEPJSONValue>,
+    /// The domain of the encrypted pseudonyms.
+    pub domain_from: PseudonymizationDomain,
+    /// The domain to transcrypt the pseudonyms to.
+    pub domain_to: PseudonymizationDomain,
+    /// The session the messages were encrypted in associated with this server.
+    pub session_from: EncryptionContext,
+    /// The session the messages should be decryptable in associated with this server.
+    pub session_to: EncryptionContext,
+}
+#[derive(Serialize, Deserialize)]
+pub struct JsonTranscryptionBatchResponse {
+    /// The transcrypted data (reordered to break linkability).
+    pub encrypted: Vec<EncryptedPEPJSONValue>,
 }
