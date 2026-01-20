@@ -6,312 +6,270 @@ use libpep::core::transcryption::batch::EncryptedData;
 use libpep::core::transcryption::{EncryptionContext, PseudonymizationDomain};
 use serde::{Deserialize, Serialize};
 
-/// Error returned when trying to convert an encrypted variant to the wrong concrete type
-#[derive(Debug, Clone, thiserror::Error)]
-#[error("Unexpected variant type: expected {expected}, got {actual}")]
-pub struct VariantConversionError {
-    pub expected: &'static str,
-    pub actual: &'static str,
-}
-
-#[derive(Serialize, Deserialize, Debug, Clone)]
-#[serde(tag = "type", content = "data")]
-///  wrapper for encrypted pseudonyms (normal or long)
-pub enum EncryptedPseudonymVariant {
-    #[serde(rename = "normal")]
-    Normal(Box<EncryptedPseudonym>),
-    #[serde(rename = "long")]
-    Long(Box<LongEncryptedPseudonym>),
-}
-
-impl From<EncryptedPseudonym> for EncryptedPseudonymVariant {
-    fn from(value: EncryptedPseudonym) -> Self {
-        EncryptedPseudonymVariant::Normal(Box::from(value))
-    }
-}
-
-impl From<LongEncryptedPseudonym> for EncryptedPseudonymVariant {
-    fn from(value: LongEncryptedPseudonym) -> Self {
-        EncryptedPseudonymVariant::Long(Box::from(value))
-    }
-}
-
-impl TryFrom<EncryptedPseudonymVariant> for EncryptedPseudonym {
-    type Error = VariantConversionError;
-
-    fn try_from(value: EncryptedPseudonymVariant) -> Result<Self, Self::Error> {
-        match value {
-            EncryptedPseudonymVariant::Normal(ep) => Ok(*ep),
-            EncryptedPseudonymVariant::Long(_) => Err(VariantConversionError {
-                expected: "Normal",
-                actual: "Long",
-            }),
-        }
-    }
-}
-
-impl TryFrom<EncryptedPseudonymVariant> for LongEncryptedPseudonym {
-    type Error = VariantConversionError;
-
-    fn try_from(value: EncryptedPseudonymVariant) -> Result<Self, Self::Error> {
-        match value {
-            EncryptedPseudonymVariant::Long(ep) => Ok(*ep),
-            EncryptedPseudonymVariant::Normal(_) => Err(VariantConversionError {
-                expected: "Long",
-                actual: "Normal",
-            }),
-        }
-    }
-}
-
-#[derive(Serialize, Deserialize, Debug, Clone)]
-#[serde(tag = "type", content = "data")]
-///  wrapper for encrypted attributes (normal or long)
-pub enum EncryptedAttributeVariant {
-    #[serde(rename = "normal")]
-    Normal(Box<EncryptedAttribute>),
-    #[serde(rename = "long")]
-    Long(Box<LongEncryptedAttribute>),
-}
-
-impl From<EncryptedAttribute> for EncryptedAttributeVariant {
-    fn from(value: EncryptedAttribute) -> Self {
-        EncryptedAttributeVariant::Normal(Box::from(value))
-    }
-}
-
-impl From<LongEncryptedAttribute> for EncryptedAttributeVariant {
-    fn from(value: LongEncryptedAttribute) -> Self {
-        EncryptedAttributeVariant::Long(Box::from(value))
-    }
-}
-
-impl TryFrom<EncryptedAttributeVariant> for EncryptedAttribute {
-    type Error = VariantConversionError;
-
-    fn try_from(value: EncryptedAttributeVariant) -> Result<Self, Self::Error> {
-        match value {
-            EncryptedAttributeVariant::Normal(ea) => Ok(*ea),
-            EncryptedAttributeVariant::Long(_) => Err(VariantConversionError {
-                expected: "Normal",
-                actual: "Long",
-            }),
-        }
-    }
-}
-
-impl TryFrom<EncryptedAttributeVariant> for LongEncryptedAttribute {
-    type Error = VariantConversionError;
-
-    fn try_from(value: EncryptedAttributeVariant) -> Result<Self, Self::Error> {
-        match value {
-            EncryptedAttributeVariant::Long(ea) => Ok(*ea),
-            EncryptedAttributeVariant::Normal(_) => Err(VariantConversionError {
-                expected: "Long",
-                actual: "Normal",
-            }),
-        }
-    }
-}
-
-#[derive(Serialize, Deserialize, Debug, Clone)]
-#[serde(tag = "type", content = "data")]
-///  wrapper for encrypted data (normal, long, or json)
-pub enum EncryptedDataVariant {
-    #[serde(rename = "normal")]
-    Normal(Box<EncryptedData>),
-    #[serde(rename = "long")]
-    Long(Box<LongEncryptedData>),
-    #[serde(rename = "json")]
-    Json(Box<EncryptedPEPJSONValue>),
-}
-
-impl From<EncryptedData> for EncryptedDataVariant {
-    fn from(value: EncryptedData) -> Self {
-        EncryptedDataVariant::Normal(Box::from(value))
-    }
-}
-
-impl From<LongEncryptedData> for EncryptedDataVariant {
-    fn from(value: LongEncryptedData) -> Self {
-        EncryptedDataVariant::Long(Box::from(value))
-    }
-}
-
-impl From<EncryptedPEPJSONValue> for EncryptedDataVariant {
-    fn from(value: EncryptedPEPJSONValue) -> Self {
-        EncryptedDataVariant::Json(Box::from(value))
-    }
-}
-
-impl TryFrom<EncryptedDataVariant> for EncryptedData {
-    type Error = VariantConversionError;
-
-    fn try_from(value: EncryptedDataVariant) -> Result<Self, Self::Error> {
-        match value {
-            EncryptedDataVariant::Normal(ed) => Ok(*ed),
-            EncryptedDataVariant::Long(_) => Err(VariantConversionError {
-                expected: "Normal",
-                actual: "Long",
-            }),
-            EncryptedDataVariant::Json(_) => Err(VariantConversionError {
-                expected: "Normal",
-                actual: "Json",
-            }),
-        }
-    }
-}
-
-impl TryFrom<EncryptedDataVariant> for LongEncryptedData {
-    type Error = VariantConversionError;
-
-    fn try_from(value: EncryptedDataVariant) -> Result<Self, Self::Error> {
-        match value {
-            EncryptedDataVariant::Long(ed) => Ok(*ed),
-            EncryptedDataVariant::Normal(_) => Err(VariantConversionError {
-                expected: "Long",
-                actual: "Normal",
-            }),
-            EncryptedDataVariant::Json(_) => Err(VariantConversionError {
-                expected: "Long",
-                actual: "Json",
-            }),
-        }
-    }
-}
-
-impl TryFrom<EncryptedDataVariant> for EncryptedPEPJSONValue {
-    type Error = VariantConversionError;
-
-    fn try_from(value: EncryptedDataVariant) -> Result<Self, Self::Error> {
-        match value {
-            EncryptedDataVariant::Json(ed) => Ok(*ed),
-            EncryptedDataVariant::Normal(_) => Err(VariantConversionError {
-                expected: "Json",
-                actual: "Normal",
-            }),
-            EncryptedDataVariant::Long(_) => Err(VariantConversionError {
-                expected: "Json",
-                actual: "Long",
-            }),
-        }
-    }
-}
-
 #[derive(Serialize, Deserialize, Debug)]
-///  API request to pseudonymize a single encrypted pseudonym
+/// An API request to transcrypt a single encrypted pseudonym.
 pub struct PseudonymizationRequest {
-    /// The encrypted pseudonym (normal or long)
-    pub encrypted_pseudonym: EncryptedPseudonymVariant,
-    /// The domain of the encrypted pseudonym
+    /// The encrypted pseudonym.
+    pub encrypted_pseudonym: EncryptedPseudonym,
+    /// The domain of the encrypted pseudonym.
     pub domain_from: PseudonymizationDomain,
-    /// The domain to transcrypt the pseudonym to
+    /// The domain to transcrypt the pseudonym to.
     pub domain_to: PseudonymizationDomain,
-    /// The session the pseudonym was encrypted in
+    /// The session the pseudonym was encrypted in associated with this server.
     pub session_from: EncryptionContext,
-    /// The session the pseudonym should be decryptable in
+    /// The session the pseudonym should be decryptable in associated with this server.
     pub session_to: EncryptionContext,
 }
-
 #[derive(Serialize, Deserialize)]
 pub struct PseudonymizationResponse {
-    /// The transcrypted pseudonym (same type as request)
-    pub encrypted_pseudonym: EncryptedPseudonymVariant,
+    /// The transcrypted pseudonym.
+    pub encrypted_pseudonym: EncryptedPseudonym,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-///  API request to pseudonymize multiple encrypted pseudonyms
-pub struct PseudonymizationBatchRequest {
-    /// The encrypted pseudonyms (all must be same type)
-    pub encrypted_pseudonyms: Vec<EncryptedPseudonymVariant>,
-    /// The domain of the encrypted pseudonyms
+/// An API request to transcrypt a single encrypted pseudonym.
+pub struct LongPseudonymizationRequest {
+    /// The encrypted pseudonym.
+    pub encrypted_pseudonym: LongEncryptedPseudonym,
+    /// The domain of the encrypted pseudonym.
     pub domain_from: PseudonymizationDomain,
-    /// The domain to transcrypt the pseudonyms to
+    /// The domain to transcrypt the pseudonym to.
     pub domain_to: PseudonymizationDomain,
-    /// The session the pseudonyms were encrypted in
+    /// The session the pseudonym was encrypted in associated with this server.
     pub session_from: EncryptionContext,
-    /// The session the pseudonyms should be decryptable in
+    /// The session the pseudonym should be decryptable in associated with this server.
+    pub session_to: EncryptionContext,
+}
+#[derive(Serialize, Deserialize)]
+pub struct LongPseudonymizationResponse {
+    /// The transcrypted pseudonym.
+    pub encrypted_pseudonym: LongEncryptedPseudonym,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+/// An API request to transcrypt multiple encrypted pseudonyms.
+pub struct PseudonymizationBatchRequest {
+    /// The encrypted pseudonyms.
+    pub encrypted_pseudonyms: Vec<EncryptedPseudonym>,
+    /// The domain of the encrypted pseudonyms.
+    pub domain_from: PseudonymizationDomain,
+    /// The domain to transcrypt the pseudonyms to.
+    pub domain_to: PseudonymizationDomain,
+    /// The session the pseudonyms were encrypted in associated with this server.
+    pub session_from: EncryptionContext,
+    /// The session the pseudonyms should be decryptable in associated with this server.
     pub session_to: EncryptionContext,
 }
 
 #[derive(Serialize, Deserialize)]
 pub struct PseudonymizationBatchResponse {
-    /// The transcrypted pseudonyms (order randomly permuted)
-    pub encrypted_pseudonyms: Vec<EncryptedPseudonymVariant>,
+    /// The transcrypted pseudonyms.
+    /// Watch out: the order of the encrypted pseudonyms will be randomly permuted to break linkability.
+    pub encrypted_pseudonyms: Vec<EncryptedPseudonym>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-///  API request to rekey a single encrypted attribute
-pub struct RekeyRequest {
-    /// The encrypted attribute (normal or long)
-    pub encrypted_attribute: EncryptedAttributeVariant,
-    /// The session the attribute was encrypted in
+/// An API request to transcrypt multiple encrypted pseudonyms.
+pub struct LongPseudonymizationBatchRequest {
+    /// The encrypted pseudonyms.
+    pub encrypted_pseudonyms: Vec<LongEncryptedPseudonym>,
+    /// The domain of the encrypted pseudonyms.
+    pub domain_from: PseudonymizationDomain,
+    /// The domain to transcrypt the pseudonyms to.
+    pub domain_to: PseudonymizationDomain,
+    /// The session the pseudonyms were encrypted in associated with this server.
     pub session_from: EncryptionContext,
-    /// The session the attribute should be decryptable in
+    /// The session the pseudonyms should be decryptable in associated with this server.
     pub session_to: EncryptionContext,
 }
 
+#[derive(Serialize, Deserialize)]
+pub struct LongPseudonymizationBatchResponse {
+    /// The transcrypted pseudonyms.
+    /// Watch out: the order of the encrypted pseudonyms will be randomly permuted to break linkability.
+    pub encrypted_pseudonyms: Vec<LongEncryptedPseudonym>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+/// An API request to transcrypt a single encrypted attribute.
+pub struct RekeyRequest {
+    /// The encrypted data.
+    pub encrypted_attribute: EncryptedAttribute,
+    /// The session the attribute was encrypted in associated with this server.
+    pub session_from: EncryptionContext,
+    /// The session the attribute should be decryptable in associated with this server.
+    pub session_to: EncryptionContext,
+}
 #[derive(Serialize, Deserialize)]
 pub struct RekeyResponse {
-    /// The rekeyed attribute (same type as request)
-    pub encrypted_attribute: EncryptedAttributeVariant,
+    /// The rekeyed attribute
+    pub encrypted_attribute: EncryptedAttribute,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-///  API request to rekey multiple encrypted attributes
-pub struct RekeyBatchRequest {
-    /// The encrypted attributes (all must be same type)
-    pub encrypted_attributes: Vec<EncryptedAttributeVariant>,
-    /// The session the attributes were encrypted in
+/// An API request to transcrypt a single encrypted attribute.
+pub struct LongRekeyRequest {
+    /// The encrypted data.
+    pub encrypted_attribute: LongEncryptedAttribute,
+    /// The session the attribute was encrypted in associated with this server.
     pub session_from: EncryptionContext,
-    /// The session the attributes should be decryptable in
+    /// The session the attribute should be decryptable in associated with this server.
     pub session_to: EncryptionContext,
 }
+#[derive(Serialize, Deserialize)]
+pub struct LongRekeyResponse {
+    /// The rekeyed attribute
+    pub encrypted_attribute: LongEncryptedAttribute,
+}
 
+#[derive(Serialize, Deserialize, Debug)]
+/// An API request to transcrypt a single encrypted attribute.
+pub struct RekeyBatchRequest {
+    /// The encrypted datas.
+    pub encrypted_attributes: Vec<EncryptedAttribute>,
+    /// The session the attributes were encrypted in associated with this server.
+    pub session_from: EncryptionContext,
+    /// The session the attributes should be decryptable in associated with this server.
+    pub session_to: EncryptionContext,
+}
 #[derive(Serialize, Deserialize)]
 pub struct RekeyBatchResponse {
-    /// The rekeyed attributes
-    pub encrypted_attributes: Vec<EncryptedAttributeVariant>,
+    /// The rekeyed attribute
+    pub encrypted_attributes: Vec<EncryptedAttribute>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-///  API request to transcrypt encrypted data (supports normal, long, and json)
-pub struct TranscryptionRequest {
-    /// The encrypted data (normal, long, or json)
-    pub encrypted: EncryptedDataVariant,
-    /// The domain of the encrypted pseudonyms
-    pub domain_from: PseudonymizationDomain,
-    /// The domain to transcrypt the pseudonyms to
-    pub domain_to: PseudonymizationDomain,
-    /// The session the data was encrypted in
+/// An API request to transcrypt a single encrypted attribute.
+pub struct LongRekeyBatchRequest {
+    /// The encrypted datas.
+    pub encrypted_attributes: Vec<LongEncryptedAttribute>,
+    /// The session the attributes were encrypted in associated with this server.
     pub session_from: EncryptionContext,
-    /// The session the data should be decryptable in
+    /// The session the attributes should be decryptable in associated with this server.
     pub session_to: EncryptionContext,
 }
+#[derive(Serialize, Deserialize)]
+pub struct LongRekeyBatchResponse {
+    /// The rekeyed attribute
+    pub encrypted_attributes: Vec<LongEncryptedAttribute>,
+}
 
+#[derive(Serialize, Deserialize, Debug)]
+/// An API request to transcrypt a single encrypted pseudonym.
+pub struct TranscryptionRequest {
+    /// The encrypted data.
+    pub encrypted: EncryptedData,
+    /// The domain of the encrypted pseudonyms.
+    pub domain_from: PseudonymizationDomain,
+    /// The domain to transcrypt the pseudonyms to.
+    pub domain_to: PseudonymizationDomain,
+    /// The session the messages were encrypted in associated with this server.
+    pub session_from: EncryptionContext,
+    /// The session the messages should be decryptable in associated with this server.
+    pub session_to: EncryptionContext,
+}
 #[derive(Serialize, Deserialize)]
 pub struct TranscryptionResponse {
-    /// The transcrypted data (same type as request)
-    pub encrypted: EncryptedDataVariant,
+    /// The transcrypted data.
+    pub encrypted: EncryptedData,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-///  API request to transcrypt multiple encrypted data items
-pub struct TranscryptionBatchRequest {
-    /// The encrypted data items (all must be same type)
-    pub encrypted: Vec<EncryptedDataVariant>,
-    /// The domain of the encrypted pseudonyms
+/// An API request to transcrypt a single encrypted pseudonym.
+pub struct LongTranscryptionRequest {
+    /// The encrypted data.
+    pub encrypted: LongEncryptedData,
+    /// The domain of the encrypted pseudonyms.
     pub domain_from: PseudonymizationDomain,
-    /// The domain to transcrypt the pseudonyms to
+    /// The domain to transcrypt the pseudonyms to.
     pub domain_to: PseudonymizationDomain,
-    /// The session the data was encrypted in
+    /// The session the messages were encrypted in associated with this server.
     pub session_from: EncryptionContext,
-    /// The session the data should be decryptable in
+    /// The session the messages should be decryptable in associated with this server.
     pub session_to: EncryptionContext,
 }
+#[derive(Serialize, Deserialize)]
+pub struct LongTranscryptionResponse {
+    /// The transcrypted data.
+    pub encrypted: LongEncryptedData,
+}
 
+#[derive(Serialize, Deserialize, Debug)]
+/// An API request to transcrypt a batch of encrypted data.
+pub struct TranscryptionBatchRequest {
+    /// The encrypted data.
+    pub encrypted: Vec<EncryptedData>,
+    /// The domain of the encrypted pseudonyms.
+    pub domain_from: PseudonymizationDomain,
+    /// The domain to transcrypt the pseudonyms to.
+    pub domain_to: PseudonymizationDomain,
+    /// The session the messages were encrypted in associated with this server.
+    pub session_from: EncryptionContext,
+    /// The session the messages should be decryptable in associated with this server.
+    pub session_to: EncryptionContext,
+}
 #[derive(Serialize, Deserialize)]
 pub struct TranscryptionBatchResponse {
     /// The transcrypted data (reordered to break linkability).
-    pub encrypted: Vec<EncryptedDataVariant>,
+    pub encrypted: Vec<EncryptedData>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+/// An API request to transcrypt a single encrypted pseudonym.
+pub struct LongTranscryptionBatchRequest {
+    /// The encrypted data.
+    pub encrypted: Vec<LongEncryptedData>,
+    /// The domain of the encrypted pseudonyms.
+    pub domain_from: PseudonymizationDomain,
+    /// The domain to transcrypt the pseudonyms to.
+    pub domain_to: PseudonymizationDomain,
+    /// The session the messages were encrypted in associated with this server.
+    pub session_from: EncryptionContext,
+    /// The session the messages should be decryptable in associated with this server.
+    pub session_to: EncryptionContext,
+}
+#[derive(Serialize, Deserialize)]
+pub struct LongTranscryptionBatchResponse {
+    /// The transcrypted data (reordered to break linkability).
+    pub encrypted: Vec<LongEncryptedData>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+/// An API request to transcrypt a single encrypted pseudonym.
+pub struct JsonTranscryptionRequest {
+    /// The encrypted data.
+    pub encrypted: EncryptedPEPJSONValue,
+    /// The domain of the encrypted pseudonyms.
+    pub domain_from: PseudonymizationDomain,
+    /// The domain to transcrypt the pseudonyms to.
+    pub domain_to: PseudonymizationDomain,
+    /// The session the messages were encrypted in associated with this server.
+    pub session_from: EncryptionContext,
+    /// The session the messages should be decryptable in associated with this server.
+    pub session_to: EncryptionContext,
+}
+#[derive(Serialize, Deserialize)]
+pub struct JsonTranscryptionResponse {
+    /// The transcrypted data.
+    pub encrypted: EncryptedPEPJSONValue,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+/// An API request to transcrypt a batch of encrypted data.
+pub struct JsonTranscryptionBatchRequest {
+    /// The encrypted data.
+    pub encrypted: Vec<EncryptedPEPJSONValue>,
+    /// The domain of the encrypted pseudonyms.
+    pub domain_from: PseudonymizationDomain,
+    /// The domain to transcrypt the pseudonyms to.
+    pub domain_to: PseudonymizationDomain,
+    /// The session the messages were encrypted in associated with this server.
+    pub session_from: EncryptionContext,
+    /// The session the messages should be decryptable in associated with this server.
+    pub session_to: EncryptionContext,
+}
+#[derive(Serialize, Deserialize)]
+pub struct JsonTranscryptionBatchResponse {
+    /// The transcrypted data (reordered to break linkability).
+    pub encrypted: Vec<EncryptedPEPJSONValue>,
 }
