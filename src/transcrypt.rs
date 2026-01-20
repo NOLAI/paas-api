@@ -2,8 +2,8 @@ use libpep::core::data::{EncryptedAttribute, EncryptedPseudonym};
 use libpep::core::json::data::EncryptedPEPJSONValue;
 use libpep::core::long::batch::LongEncryptedData;
 use libpep::core::long::data::{LongEncryptedAttribute, LongEncryptedPseudonym};
-use libpep::core::transcryption::{EncryptionContext, PseudonymizationDomain};
 use libpep::core::transcryption::batch::EncryptedData;
+use libpep::core::transcryption::{EncryptionContext, PseudonymizationDomain};
 use serde::{Deserialize, Serialize};
 
 /// Error returned when trying to convert an encrypted variant to the wrong concrete type
@@ -14,26 +14,25 @@ pub struct VariantConversionError {
     pub actual: &'static str,
 }
 
-
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(tag = "type", content = "data")]
 ///  wrapper for encrypted pseudonyms (normal or long)
 pub enum EncryptedPseudonymVariant {
     #[serde(rename = "normal")]
-    Normal(EncryptedPseudonym),
+    Normal(Box<EncryptedPseudonym>),
     #[serde(rename = "long")]
-    Long(LongEncryptedPseudonym)
+    Long(Box<LongEncryptedPseudonym>),
 }
 
 impl From<EncryptedPseudonym> for EncryptedPseudonymVariant {
     fn from(value: EncryptedPseudonym) -> Self {
-        EncryptedPseudonymVariant::Normal(value)
+        EncryptedPseudonymVariant::Normal(Box::from(value))
     }
 }
 
 impl From<LongEncryptedPseudonym> for EncryptedPseudonymVariant {
     fn from(value: LongEncryptedPseudonym) -> Self {
-        EncryptedPseudonymVariant::Long(value)
+        EncryptedPseudonymVariant::Long(Box::from(value))
     }
 }
 
@@ -42,7 +41,7 @@ impl TryFrom<EncryptedPseudonymVariant> for EncryptedPseudonym {
 
     fn try_from(value: EncryptedPseudonymVariant) -> Result<Self, Self::Error> {
         match value {
-            EncryptedPseudonymVariant::Normal(ep) => Ok(ep),
+            EncryptedPseudonymVariant::Normal(ep) => Ok(*ep),
             EncryptedPseudonymVariant::Long(_) => Err(VariantConversionError {
                 expected: "Normal",
                 actual: "Long",
@@ -56,7 +55,7 @@ impl TryFrom<EncryptedPseudonymVariant> for LongEncryptedPseudonym {
 
     fn try_from(value: EncryptedPseudonymVariant) -> Result<Self, Self::Error> {
         match value {
-            EncryptedPseudonymVariant::Long(ep) => Ok(ep),
+            EncryptedPseudonymVariant::Long(ep) => Ok(*ep),
             EncryptedPseudonymVariant::Normal(_) => Err(VariantConversionError {
                 expected: "Long",
                 actual: "Normal",
@@ -70,20 +69,20 @@ impl TryFrom<EncryptedPseudonymVariant> for LongEncryptedPseudonym {
 ///  wrapper for encrypted attributes (normal or long)
 pub enum EncryptedAttributeVariant {
     #[serde(rename = "normal")]
-    Normal(EncryptedAttribute),
+    Normal(Box<EncryptedAttribute>),
     #[serde(rename = "long")]
-    Long(LongEncryptedAttribute),
+    Long(Box<LongEncryptedAttribute>),
 }
 
 impl From<EncryptedAttribute> for EncryptedAttributeVariant {
     fn from(value: EncryptedAttribute) -> Self {
-        EncryptedAttributeVariant::Normal(value)
+        EncryptedAttributeVariant::Normal(Box::from(value))
     }
 }
 
 impl From<LongEncryptedAttribute> for EncryptedAttributeVariant {
     fn from(value: LongEncryptedAttribute) -> Self {
-        EncryptedAttributeVariant::Long(value)
+        EncryptedAttributeVariant::Long(Box::from(value))
     }
 }
 
@@ -92,7 +91,7 @@ impl TryFrom<EncryptedAttributeVariant> for EncryptedAttribute {
 
     fn try_from(value: EncryptedAttributeVariant) -> Result<Self, Self::Error> {
         match value {
-            EncryptedAttributeVariant::Normal(ea) => Ok(ea),
+            EncryptedAttributeVariant::Normal(ea) => Ok(*ea),
             EncryptedAttributeVariant::Long(_) => Err(VariantConversionError {
                 expected: "Normal",
                 actual: "Long",
@@ -106,7 +105,7 @@ impl TryFrom<EncryptedAttributeVariant> for LongEncryptedAttribute {
 
     fn try_from(value: EncryptedAttributeVariant) -> Result<Self, Self::Error> {
         match value {
-            EncryptedAttributeVariant::Long(ea) => Ok(ea),
+            EncryptedAttributeVariant::Long(ea) => Ok(*ea),
             EncryptedAttributeVariant::Normal(_) => Err(VariantConversionError {
                 expected: "Long",
                 actual: "Normal",
@@ -120,28 +119,28 @@ impl TryFrom<EncryptedAttributeVariant> for LongEncryptedAttribute {
 ///  wrapper for encrypted data (normal, long, or json)
 pub enum EncryptedDataVariant {
     #[serde(rename = "normal")]
-    Normal(EncryptedData),
+    Normal(Box<EncryptedData>),
     #[serde(rename = "long")]
-    Long(LongEncryptedData),
+    Long(Box<LongEncryptedData>),
     #[serde(rename = "json")]
-    Json(EncryptedPEPJSONValue),
+    Json(Box<EncryptedPEPJSONValue>),
 }
 
 impl From<EncryptedData> for EncryptedDataVariant {
     fn from(value: EncryptedData) -> Self {
-        EncryptedDataVariant::Normal(value)
+        EncryptedDataVariant::Normal(Box::from(value))
     }
 }
 
 impl From<LongEncryptedData> for EncryptedDataVariant {
     fn from(value: LongEncryptedData) -> Self {
-        EncryptedDataVariant::Long(value)
+        EncryptedDataVariant::Long(Box::from(value))
     }
 }
 
 impl From<EncryptedPEPJSONValue> for EncryptedDataVariant {
     fn from(value: EncryptedPEPJSONValue) -> Self {
-        EncryptedDataVariant::Json(value)
+        EncryptedDataVariant::Json(Box::from(value))
     }
 }
 
@@ -150,7 +149,7 @@ impl TryFrom<EncryptedDataVariant> for EncryptedData {
 
     fn try_from(value: EncryptedDataVariant) -> Result<Self, Self::Error> {
         match value {
-            EncryptedDataVariant::Normal(ed) => Ok(ed),
+            EncryptedDataVariant::Normal(ed) => Ok(*ed),
             EncryptedDataVariant::Long(_) => Err(VariantConversionError {
                 expected: "Normal",
                 actual: "Long",
@@ -168,7 +167,7 @@ impl TryFrom<EncryptedDataVariant> for LongEncryptedData {
 
     fn try_from(value: EncryptedDataVariant) -> Result<Self, Self::Error> {
         match value {
-            EncryptedDataVariant::Long(ed) => Ok(ed),
+            EncryptedDataVariant::Long(ed) => Ok(*ed),
             EncryptedDataVariant::Normal(_) => Err(VariantConversionError {
                 expected: "Long",
                 actual: "Normal",
@@ -186,7 +185,7 @@ impl TryFrom<EncryptedDataVariant> for EncryptedPEPJSONValue {
 
     fn try_from(value: EncryptedDataVariant) -> Result<Self, Self::Error> {
         match value {
-            EncryptedDataVariant::Json(ed) => Ok(ed),
+            EncryptedDataVariant::Json(ed) => Ok(*ed),
             EncryptedDataVariant::Normal(_) => Err(VariantConversionError {
                 expected: "Json",
                 actual: "Normal",

@@ -1,5 +1,5 @@
-use libpep::core::keys::GlobalPublicKeys;
 use crate::status::SystemId;
+use libpep::core::keys::GlobalPublicKeys;
 use libpep::distributed::server::setup::BlindedGlobalKeys;
 use serde::{Deserialize, Serialize};
 use url::Url;
