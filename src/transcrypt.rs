@@ -1,9 +1,8 @@
-use libpep::core::data::{EncryptedAttribute, EncryptedPseudonym};
-use libpep::core::json::data::EncryptedPEPJSONValue;
-use libpep::core::long::batch::LongEncryptedData;
-use libpep::core::long::data::{LongEncryptedAttribute, LongEncryptedPseudonym};
-use libpep::core::transcryption::batch::EncryptedData;
-use libpep::core::transcryption::{EncryptionContext, PseudonymizationDomain};
+use libpep::data::json::EncryptedPEPJSONValue;
+use libpep::data::long::{LongEncryptedAttribute, LongEncryptedPseudonym};
+use libpep::data::records::{EncryptedRecord, LongEncryptedRecord};
+use libpep::data::simple::{EncryptedAttribute, EncryptedPseudonym};
+use libpep::factors::{EncryptionContext, PseudonymizationDomain};
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -158,7 +157,7 @@ pub struct LongRekeyBatchResponse {
 /// An API request to transcrypt a single encrypted pseudonym.
 pub struct TranscryptionRequest {
     /// The encrypted data.
-    pub encrypted: EncryptedData,
+    pub encrypted: EncryptedRecord,
     /// The domain of the encrypted pseudonyms.
     pub domain_from: PseudonymizationDomain,
     /// The domain to transcrypt the pseudonyms to.
@@ -171,14 +170,14 @@ pub struct TranscryptionRequest {
 #[derive(Serialize, Deserialize)]
 pub struct TranscryptionResponse {
     /// The transcrypted data.
-    pub encrypted: EncryptedData,
+    pub encrypted: EncryptedRecord,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 /// An API request to transcrypt a single encrypted pseudonym.
 pub struct LongTranscryptionRequest {
     /// The encrypted data.
-    pub encrypted: LongEncryptedData,
+    pub encrypted: LongEncryptedRecord,
     /// The domain of the encrypted pseudonyms.
     pub domain_from: PseudonymizationDomain,
     /// The domain to transcrypt the pseudonyms to.
@@ -191,14 +190,14 @@ pub struct LongTranscryptionRequest {
 #[derive(Serialize, Deserialize)]
 pub struct LongTranscryptionResponse {
     /// The transcrypted data.
-    pub encrypted: LongEncryptedData,
+    pub encrypted: LongEncryptedRecord,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 /// An API request to transcrypt a batch of encrypted data.
 pub struct TranscryptionBatchRequest {
     /// The encrypted data.
-    pub encrypted: Vec<EncryptedData>,
+    pub encrypted: Vec<EncryptedRecord>,
     /// The domain of the encrypted pseudonyms.
     pub domain_from: PseudonymizationDomain,
     /// The domain to transcrypt the pseudonyms to.
@@ -211,14 +210,14 @@ pub struct TranscryptionBatchRequest {
 #[derive(Serialize, Deserialize)]
 pub struct TranscryptionBatchResponse {
     /// The transcrypted data (reordered to break linkability).
-    pub encrypted: Vec<EncryptedData>,
+    pub encrypted: Vec<EncryptedRecord>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 /// An API request to transcrypt a single encrypted pseudonym.
 pub struct LongTranscryptionBatchRequest {
     /// The encrypted data.
-    pub encrypted: Vec<LongEncryptedData>,
+    pub encrypted: Vec<LongEncryptedRecord>,
     /// The domain of the encrypted pseudonyms.
     pub domain_from: PseudonymizationDomain,
     /// The domain to transcrypt the pseudonyms to.
@@ -231,7 +230,7 @@ pub struct LongTranscryptionBatchRequest {
 #[derive(Serialize, Deserialize)]
 pub struct LongTranscryptionBatchResponse {
     /// The transcrypted data (reordered to break linkability).
-    pub encrypted: Vec<LongEncryptedData>,
+    pub encrypted: Vec<LongEncryptedRecord>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
