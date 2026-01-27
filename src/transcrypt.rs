@@ -1,4 +1,4 @@
-use libpep::data::traits::{Pseudonymizable, Rekeyable, Transcryptable};
+use libpep::data::traits::{HasStructure, Pseudonymizable, Rekeyable, Transcryptable};
 use libpep::factors::{EncryptionContext, PseudonymizationDomain};
 use serde::{Deserialize, Serialize};
 
@@ -25,7 +25,7 @@ pub struct PseudonymizationResponse<T: Pseudonymizable> {
 
 #[derive(Serialize, Deserialize, Debug)]
 /// An API request to transcrypt a batch of encrypted pseudonyms.
-pub struct PseudonymizationBatchRequest<T: Pseudonymizable> {
+pub struct PseudonymizationBatchRequest<T: Pseudonymizable + HasStructure> {
     /// The encrypted pseudonyms.
     pub encrypted: Vec<T>,
     /// The domain of the encrypted pseudonyms.
@@ -39,7 +39,7 @@ pub struct PseudonymizationBatchRequest<T: Pseudonymizable> {
 }
 
 #[derive(Serialize, Deserialize)]
-pub struct PseudonymizationBatchResponse<T: Pseudonymizable> {
+pub struct PseudonymizationBatchResponse<T: Pseudonymizable + HasStructure> {
     /// The transcrypted pseudonyms.
     /// Watch out: the order may be randomly permuted to break linkability.
     pub result: Vec<T>,
@@ -64,7 +64,7 @@ pub struct RekeyResponse<T: Rekeyable> {
 
 #[derive(Serialize, Deserialize, Debug)]
 /// An API request to rekey a batch of encrypted attributes.
-pub struct RekeyBatchRequest<T: Rekeyable> {
+pub struct RekeyBatchRequest<T: Rekeyable + HasStructure> {
     /// The encrypted data.
     pub encrypted: Vec<T>,
     /// The session the attributes were encrypted in associated with this server.
@@ -74,7 +74,7 @@ pub struct RekeyBatchRequest<T: Rekeyable> {
 }
 
 #[derive(Serialize, Deserialize)]
-pub struct RekeyBatchResponse<T: Rekeyable> {
+pub struct RekeyBatchResponse<T: Rekeyable + HasStructure> {
     /// The rekeyed attributes.
     pub result: Vec<T>,
 }
@@ -102,7 +102,7 @@ pub struct TranscryptionResponse<T: Transcryptable> {
 
 #[derive(Serialize, Deserialize, Debug)]
 /// An API request to transcrypt a batch of encrypted data.
-pub struct TranscryptionBatchRequest<T: Transcryptable> {
+pub struct TranscryptionBatchRequest<T: Transcryptable + HasStructure> {
     /// The encrypted data.
     pub encrypted: Vec<T>,
     /// The domain of the encrypted pseudonyms.
@@ -116,7 +116,7 @@ pub struct TranscryptionBatchRequest<T: Transcryptable> {
 }
 
 #[derive(Serialize, Deserialize)]
-pub struct TranscryptionBatchResponse<T: Transcryptable> {
+pub struct TranscryptionBatchResponse<T: Transcryptable + HasStructure> {
     /// The transcrypted data.
     /// Watch out: the order may be randomly permuted to break linkability.
     pub result: Vec<T>,
