@@ -1,15 +1,12 @@
-use libpep::data::json::EncryptedPEPJSONValue;
-use libpep::data::long::{LongEncryptedAttribute, LongEncryptedPseudonym};
-use libpep::data::records::{EncryptedRecord, LongEncryptedRecord};
-use libpep::data::simple::{EncryptedAttribute, EncryptedPseudonym};
+use libpep::data::traits::{Pseudonymizable, Rekeyable, Transcryptable};
 use libpep::factors::{EncryptionContext, PseudonymizationDomain};
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug)]
-/// An API request to transcrypt a single encrypted pseudonym.
-pub struct PseudonymizationRequest {
+/// An API request to transcrypt an encrypted pseudonym.
+pub struct PseudonymizationRequest<T: Pseudonymizable> {
     /// The encrypted pseudonym.
-    pub encrypted_pseudonym: EncryptedPseudonym,
+    pub encrypted: T,
     /// The domain of the encrypted pseudonym.
     pub domain_from: PseudonymizationDomain,
     /// The domain to transcrypt the pseudonym to.
@@ -19,37 +16,18 @@ pub struct PseudonymizationRequest {
     /// The session the pseudonym should be decryptable in associated with this server.
     pub session_to: EncryptionContext,
 }
+
 #[derive(Serialize, Deserialize)]
-pub struct PseudonymizationResponse {
+pub struct PseudonymizationResponse<T: Pseudonymizable> {
     /// The transcrypted pseudonym.
-    pub encrypted_pseudonym: EncryptedPseudonym,
+    pub result: T,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-/// An API request to transcrypt a single encrypted pseudonym.
-pub struct LongPseudonymizationRequest {
-    /// The encrypted pseudonym.
-    pub encrypted_pseudonym: LongEncryptedPseudonym,
-    /// The domain of the encrypted pseudonym.
-    pub domain_from: PseudonymizationDomain,
-    /// The domain to transcrypt the pseudonym to.
-    pub domain_to: PseudonymizationDomain,
-    /// The session the pseudonym was encrypted in associated with this server.
-    pub session_from: EncryptionContext,
-    /// The session the pseudonym should be decryptable in associated with this server.
-    pub session_to: EncryptionContext,
-}
-#[derive(Serialize, Deserialize)]
-pub struct LongPseudonymizationResponse {
-    /// The transcrypted pseudonym.
-    pub encrypted_pseudonym: LongEncryptedPseudonym,
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-/// An API request to transcrypt multiple encrypted pseudonyms.
-pub struct PseudonymizationBatchRequest {
+/// An API request to transcrypt a batch of encrypted pseudonyms.
+pub struct PseudonymizationBatchRequest<T: Pseudonymizable> {
     /// The encrypted pseudonyms.
-    pub encrypted_pseudonyms: Vec<EncryptedPseudonym>,
+    pub encrypted: Vec<T>,
     /// The domain of the encrypted pseudonyms.
     pub domain_from: PseudonymizationDomain,
     /// The domain to transcrypt the pseudonyms to.
@@ -61,103 +39,51 @@ pub struct PseudonymizationBatchRequest {
 }
 
 #[derive(Serialize, Deserialize)]
-pub struct PseudonymizationBatchResponse {
+pub struct PseudonymizationBatchResponse<T: Pseudonymizable> {
     /// The transcrypted pseudonyms.
-    /// Watch out: the order of the encrypted pseudonyms will be randomly permuted to break linkability.
-    pub encrypted_pseudonyms: Vec<EncryptedPseudonym>,
+    /// Watch out: the order may be randomly permuted to break linkability.
+    pub result: Vec<T>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-/// An API request to transcrypt multiple encrypted pseudonyms.
-pub struct LongPseudonymizationBatchRequest {
-    /// The encrypted pseudonyms.
-    pub encrypted_pseudonyms: Vec<LongEncryptedPseudonym>,
-    /// The domain of the encrypted pseudonyms.
-    pub domain_from: PseudonymizationDomain,
-    /// The domain to transcrypt the pseudonyms to.
-    pub domain_to: PseudonymizationDomain,
-    /// The session the pseudonyms were encrypted in associated with this server.
-    pub session_from: EncryptionContext,
-    /// The session the pseudonyms should be decryptable in associated with this server.
-    pub session_to: EncryptionContext,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct LongPseudonymizationBatchResponse {
-    /// The transcrypted pseudonyms.
-    /// Watch out: the order of the encrypted pseudonyms will be randomly permuted to break linkability.
-    pub encrypted_pseudonyms: Vec<LongEncryptedPseudonym>,
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-/// An API request to transcrypt a single encrypted attribute.
-pub struct RekeyRequest {
+/// An API request to rekey an encrypted attribute.
+pub struct RekeyRequest<T: Rekeyable> {
     /// The encrypted data.
-    pub encrypted_attribute: EncryptedAttribute,
+    pub encrypted: T,
     /// The session the attribute was encrypted in associated with this server.
     pub session_from: EncryptionContext,
     /// The session the attribute should be decryptable in associated with this server.
     pub session_to: EncryptionContext,
 }
+
 #[derive(Serialize, Deserialize)]
-pub struct RekeyResponse {
-    /// The rekeyed attribute
-    pub encrypted_attribute: EncryptedAttribute,
+pub struct RekeyResponse<T: Rekeyable> {
+    /// The rekeyed attribute.
+    pub result: T,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-/// An API request to transcrypt a single encrypted attribute.
-pub struct LongRekeyRequest {
+/// An API request to rekey a batch of encrypted attributes.
+pub struct RekeyBatchRequest<T: Rekeyable> {
     /// The encrypted data.
-    pub encrypted_attribute: LongEncryptedAttribute,
-    /// The session the attribute was encrypted in associated with this server.
-    pub session_from: EncryptionContext,
-    /// The session the attribute should be decryptable in associated with this server.
-    pub session_to: EncryptionContext,
-}
-#[derive(Serialize, Deserialize)]
-pub struct LongRekeyResponse {
-    /// The rekeyed attribute
-    pub encrypted_attribute: LongEncryptedAttribute,
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-/// An API request to transcrypt a single encrypted attribute.
-pub struct RekeyBatchRequest {
-    /// The encrypted datas.
-    pub encrypted_attributes: Vec<EncryptedAttribute>,
+    pub encrypted: Vec<T>,
     /// The session the attributes were encrypted in associated with this server.
     pub session_from: EncryptionContext,
     /// The session the attributes should be decryptable in associated with this server.
     pub session_to: EncryptionContext,
 }
+
 #[derive(Serialize, Deserialize)]
-pub struct RekeyBatchResponse {
-    /// The rekeyed attribute
-    pub encrypted_attributes: Vec<EncryptedAttribute>,
+pub struct RekeyBatchResponse<T: Rekeyable> {
+    /// The rekeyed attributes.
+    pub result: Vec<T>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-/// An API request to transcrypt a single encrypted attribute.
-pub struct LongRekeyBatchRequest {
-    /// The encrypted datas.
-    pub encrypted_attributes: Vec<LongEncryptedAttribute>,
-    /// The session the attributes were encrypted in associated with this server.
-    pub session_from: EncryptionContext,
-    /// The session the attributes should be decryptable in associated with this server.
-    pub session_to: EncryptionContext,
-}
-#[derive(Serialize, Deserialize)]
-pub struct LongRekeyBatchResponse {
-    /// The rekeyed attribute
-    pub encrypted_attributes: Vec<LongEncryptedAttribute>,
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-/// An API request to transcrypt a single encrypted pseudonym.
-pub struct TranscryptionRequest {
+/// An API request to transcrypt encrypted data.
+pub struct TranscryptionRequest<T: Transcryptable> {
     /// The encrypted data.
-    pub encrypted: EncryptedRecord,
+    pub encrypted: T,
     /// The domain of the encrypted pseudonyms.
     pub domain_from: PseudonymizationDomain,
     /// The domain to transcrypt the pseudonyms to.
@@ -167,37 +93,18 @@ pub struct TranscryptionRequest {
     /// The session the messages should be decryptable in associated with this server.
     pub session_to: EncryptionContext,
 }
-#[derive(Serialize, Deserialize)]
-pub struct TranscryptionResponse {
-    /// The transcrypted data.
-    pub encrypted: EncryptedRecord,
-}
 
-#[derive(Serialize, Deserialize, Debug)]
-/// An API request to transcrypt a single encrypted pseudonym.
-pub struct LongTranscryptionRequest {
-    /// The encrypted data.
-    pub encrypted: LongEncryptedRecord,
-    /// The domain of the encrypted pseudonyms.
-    pub domain_from: PseudonymizationDomain,
-    /// The domain to transcrypt the pseudonyms to.
-    pub domain_to: PseudonymizationDomain,
-    /// The session the messages were encrypted in associated with this server.
-    pub session_from: EncryptionContext,
-    /// The session the messages should be decryptable in associated with this server.
-    pub session_to: EncryptionContext,
-}
 #[derive(Serialize, Deserialize)]
-pub struct LongTranscryptionResponse {
+pub struct TranscryptionResponse<T: Transcryptable> {
     /// The transcrypted data.
-    pub encrypted: LongEncryptedRecord,
+    pub result: T,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 /// An API request to transcrypt a batch of encrypted data.
-pub struct TranscryptionBatchRequest {
+pub struct TranscryptionBatchRequest<T: Transcryptable> {
     /// The encrypted data.
-    pub encrypted: Vec<EncryptedRecord>,
+    pub encrypted: Vec<T>,
     /// The domain of the encrypted pseudonyms.
     pub domain_from: PseudonymizationDomain,
     /// The domain to transcrypt the pseudonyms to.
@@ -206,69 +113,11 @@ pub struct TranscryptionBatchRequest {
     pub session_from: EncryptionContext,
     /// The session the messages should be decryptable in associated with this server.
     pub session_to: EncryptionContext,
-}
-#[derive(Serialize, Deserialize)]
-pub struct TranscryptionBatchResponse {
-    /// The transcrypted data (reordered to break linkability).
-    pub encrypted: Vec<EncryptedRecord>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
-/// An API request to transcrypt a single encrypted pseudonym.
-pub struct LongTranscryptionBatchRequest {
-    /// The encrypted data.
-    pub encrypted: Vec<LongEncryptedRecord>,
-    /// The domain of the encrypted pseudonyms.
-    pub domain_from: PseudonymizationDomain,
-    /// The domain to transcrypt the pseudonyms to.
-    pub domain_to: PseudonymizationDomain,
-    /// The session the messages were encrypted in associated with this server.
-    pub session_from: EncryptionContext,
-    /// The session the messages should be decryptable in associated with this server.
-    pub session_to: EncryptionContext,
-}
 #[derive(Serialize, Deserialize)]
-pub struct LongTranscryptionBatchResponse {
-    /// The transcrypted data (reordered to break linkability).
-    pub encrypted: Vec<LongEncryptedRecord>,
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-/// An API request to transcrypt a single encrypted pseudonym.
-pub struct JsonTranscryptionRequest {
-    /// The encrypted data.
-    pub encrypted: EncryptedPEPJSONValue,
-    /// The domain of the encrypted pseudonyms.
-    pub domain_from: PseudonymizationDomain,
-    /// The domain to transcrypt the pseudonyms to.
-    pub domain_to: PseudonymizationDomain,
-    /// The session the messages were encrypted in associated with this server.
-    pub session_from: EncryptionContext,
-    /// The session the messages should be decryptable in associated with this server.
-    pub session_to: EncryptionContext,
-}
-#[derive(Serialize, Deserialize)]
-pub struct JsonTranscryptionResponse {
+pub struct TranscryptionBatchResponse<T: Transcryptable> {
     /// The transcrypted data.
-    pub encrypted: EncryptedPEPJSONValue,
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-/// An API request to transcrypt a batch of encrypted data.
-pub struct JsonTranscryptionBatchRequest {
-    /// The encrypted data.
-    pub encrypted: Vec<EncryptedPEPJSONValue>,
-    /// The domain of the encrypted pseudonyms.
-    pub domain_from: PseudonymizationDomain,
-    /// The domain to transcrypt the pseudonyms to.
-    pub domain_to: PseudonymizationDomain,
-    /// The session the messages were encrypted in associated with this server.
-    pub session_from: EncryptionContext,
-    /// The session the messages should be decryptable in associated with this server.
-    pub session_to: EncryptionContext,
-}
-#[derive(Serialize, Deserialize)]
-pub struct JsonTranscryptionBatchResponse {
-    /// The transcrypted data (reordered to break linkability).
-    pub encrypted: Vec<EncryptedPEPJSONValue>,
+    /// Watch out: the order may be randomly permuted to break linkability.
+    pub result: Vec<T>,
 }
