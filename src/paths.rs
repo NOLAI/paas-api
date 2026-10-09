@@ -5,8 +5,8 @@ use libpep::data::simple::{EncryptedAttribute, EncryptedPseudonym};
 use libpep::data::traits::HasStructure;
 
 /// Trait for encrypted types to provide their API path segment.
-/// The path format is: /{operation}[_batch]/{type_segment}
-/// Examples: /pseudonymize/pseudonym, /rekey_batch/long_attribute, /transcrypt/json
+/// The path format is: `/{operation}[_batch]/{type_segment}`
+/// Examples: `/pseudonymize/pseudonym`, `/rekey_batch/long_attribute`, `/transcrypt/json`
 pub trait ApiPath {
     /// Returns the full path segment for this encrypted type (e.g., "pseudonym", "long_attribute", "json").
     fn path_segment() -> &'static str;
