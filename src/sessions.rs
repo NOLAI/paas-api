@@ -1,4 +1,4 @@
-use libpep::factors::EncryptionContext;
+use libpep::contexts::EncryptionContext;
 use libpep::keys::distribution::SessionKeyShares;
 use serde::{Deserialize, Serialize};
 

@@ -1,5 +1,5 @@
+use libpep::contexts::{EncryptionContext, PseudonymizationDomain};
 use libpep::data::traits::{HasStructure, Pseudonymizable, Rekeyable, Transcryptable};
-use libpep::factors::{EncryptionContext, PseudonymizationDomain};
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug)]

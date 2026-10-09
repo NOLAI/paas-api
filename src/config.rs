@@ -1,5 +1,5 @@
 use crate::status::SystemId;
-use libpep::keys::distribution::BlindedGlobalKeys;
+use libpep::keys::distribution::BlindedGlobalSecretKeys;
 use libpep::keys::GlobalPublicKeys;
 use serde::{Deserialize, Serialize};
 use url::Url;
@@ -13,7 +13,7 @@ pub struct TranscryptorConfig {
 #[derive(Serialize, Deserialize, Clone, Debug, Eq, PartialEq)]
 /// The configuration of a PAAS system
 pub struct PAASConfig {
-    pub blinded_global_keys: BlindedGlobalKeys,
+    pub blinded_global_keys: BlindedGlobalSecretKeys,
     pub global_public_keys: GlobalPublicKeys,
     pub transcryptors: Vec<TranscryptorConfig>,
 }
